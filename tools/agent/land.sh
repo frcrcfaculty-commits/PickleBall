@@ -68,7 +68,12 @@ fi
 # ---- 4. push ---------------------------------------------------------------
 HEAD_SHA="$(git rev-parse HEAD)"
 SHORT="${HEAD_SHA:0:8}"
-git push -q --force-with-lease origin "HEAD:refs/heads/$BR" || { red "PUSH FAILED"; exit 66; }
+# Explicit lease: overwrite the remote branch only if it is still exactly
+# what we last saw (empty = must not exist yet). A bare --force-with-lease
+# needs a remote-tracking ref we never fetched and fails as "stale info".
+EXPECT="$(git ls-remote origin "refs/heads/$BR" | cut -f1)"
+git push -q --force-with-lease="refs/heads/$BR:$EXPECT" origin "HEAD:refs/heads/$BR" ||
+  { red "PUSH FAILED (someone else pushed to $BR? run: git fetch origin $BR && git log origin/$BR)"; exit 66; }
 echo "• pushed $BR @ $SHORT — integrator is merging (typically 3–6 min)…"
 
 # ---- 5. wait for proof -----------------------------------------------------
