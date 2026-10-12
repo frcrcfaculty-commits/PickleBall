@@ -9,10 +9,12 @@ PJ-CORE-01 in 85 seconds.
 |---|---|---|---|
 | Claude (this chat) | Anthropic cloud + your linked desktop | — | CORE-01 ✅, then CORE-02, CORE-03, integration review |
 | Antigravity | M3 Max Mac | `~/pj-antigravity` | UI-01 → NET-01 → UI-02 → (later) MOB-01 |
-| Gemini (CLI) | i9 Windows (WSL) or M3 Max | `~/pj-gemini` | VAL-01 → VAL-02 → VAL-03 |
+| Gemini (CLI) | M3 Max Mac (separate folder from Antigravity) | `~/pj-gemini` | VAL-01 → VAL-02 → VAL-03 |
 | Hermes (Claude via **Console API key**) | home i9 Windows | `~/pj-hermes` | OPS-01 → OPS-02 → OPS-03 |
 
 Never point two agents at the same directory — they would switch branches under each other.
+
+Your own steps (logins, pasting these prompts, the phone check) are in `docs/agents/HUMAN_STEPS.md`.
 
 ---
 
