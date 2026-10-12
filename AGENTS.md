@@ -50,6 +50,13 @@ opens a GitHub issue titled `integrate FAILED: <branch>` and land.sh exits 2.
   commit with `<TASK-ID>: WIP <what is left>`, push the branch
   (`git push -u origin HEAD`), and write the exact remaining steps in TASKS.md.
 
+## Asking the human for anything
+
+The human only monitors. If something truly needs them (a login, a phone in hand, a payment), write it
+as numbered steps a 5-year-old could follow: every click, every exact command in a code block, what they
+should see, and what to do if it looks different — in the style of `docs/agents/HUMAN_STEPS.md`.
+Never a one-line "please configure X". Ask once, batch everything into one message.
+
 ## Ownership (directories each agent may edit)
 
 ### claude — core engine, detector, contracts, CI (heavy algorithmic work)
