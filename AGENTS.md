@@ -58,7 +58,7 @@ opens a GitHub issue titled `integrate FAILED: <branch>` and land.sh exits 2.
 - `web/test/engine.test.ts`, `web/test/detector.test.ts`, `web/test/pipeline.test.ts`, `web/test/synth.ts`
 - `web/vite.config.ts`, `web/tsconfig.json`, `web/package.json`, `web/package-lock.json`
 - `.github/**` (except `.github/workflows/e2e.yml`), `tools/agent/**`
-- `AGENTS.md`, `docs/DECISION.md`, `docs/ARCHITECTURE.md`
+- `AGENTS.md`, `docs/DECISION.md`, `docs/ARCHITECTURE.md`, `docs/agents/**`
 
 ### antigravity — app UI, pairing, transport, PWA
 - `web/index.html`, `web/src/ui/**`, `web/src/net/**`, `web/src/sw.ts`
