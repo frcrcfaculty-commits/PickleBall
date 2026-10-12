@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>PickleJudge · Device Check</title>
+  <style>
+    :root { color-scheme: dark; --bg:#0d0f0e; --fg:#e9eee9; --dim:#8a958c; --ok:#7bd88f; --bad:#ff7a6b; --warn:#f2c14e; }
+    body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 ui-sans-serif,-apple-system,system-ui,sans-serif; }
+    main { max-width:640px; margin:0 auto; padding:20px 16px 48px; }
+    h1 { font-size:20px; margin:0 0 4px; } p { color:var(--dim); margin:0 0 16px; }
+    button { font:inherit; padding:12px 18px; border-radius:10px; border:0; background:#e9eee9; color:#0d0f0e; font-weight:600; }
+    video { width:100%; border-radius:10px; margin:12px 0; background:#000; }
+    pre { white-space:pre-wrap; font:12px/1.4 ui-monospace,Menlo,monospace; background:#151816; padding:12px; border-radius:10px; }
+    .row { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #1e2320; }
+    .ok{color:var(--ok)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Device check</h1>
+    <p>Point the phone at anything that moves. Takes about 25 seconds. Keep the screen on.</p>
+    <button id="go">Run check</button>
+    <video id="v" playsinline muted></video>
+    <div id="rows"></div>
+    <pre id="out"></pre>
+    <button id="copy" hidden>Copy report</button>
+  </main>
+  <script type="module" src="/src/spike/spike.ts"></script>
+</body>
+</html>
