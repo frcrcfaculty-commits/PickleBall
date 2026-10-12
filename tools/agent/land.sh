@@ -74,6 +74,11 @@ SHORT="${HEAD_SHA:0:8}"
 EXPECT="$(git ls-remote origin "refs/heads/$BR" | cut -f1)"
 git push -q --force-with-lease="refs/heads/$BR:$EXPECT" origin "HEAD:refs/heads/$BR" ||
   { red "PUSH FAILED (someone else pushed to $BR? run: git fetch origin $BR && git log origin/$BR)"; exit 66; }
+# Record the push locally (tracking ref + upstream) so `git status` and any
+# "unpushed commits" checks see the branch as pushed. Single-branch/shallow
+# clones only fetch main by default, hence the explicit refspec.
+git fetch -q origin "+refs/heads/$BR:refs/remotes/origin/$BR" 2>/dev/null &&
+  git branch -q -u "origin/$BR" 2>/dev/null || true
 echo "• pushed $BR @ $SHORT — integrator is merging (typically 3–6 min)…"
 
 # ---- 5. wait for proof -----------------------------------------------------
