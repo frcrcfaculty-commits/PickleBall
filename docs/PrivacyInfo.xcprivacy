@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  PrivacyInfo.xcprivacy — Apple privacy manifest.
+
+  Missing or incorrect Required-Reason API declarations is the most common
+  2026 App Store rejection cause. The three entries below cover what React
+  Native, VisionCamera, and any C++ using file timestamps will trip.
+
+  If you add crash reporting or analytics, you MUST add the corresponding
+  NSPrivacyCollectedDataTypes entry here AND change the App Store Connect
+  privacy answers AND amend docs/PRIVACY_POLICY.md. All three or none.
+
+  Verify before every submission with: Product > Archive > Distribute App >
+  Privacy Report.
+-->
+<plist version="1.0">
+<dict>
+  <key>NSPrivacyTracking</key>
+  <false/>
+
+  <key>NSPrivacyTrackingDomains</key>
+  <array/>
+
+  <!-- No data collected. If you ship Sentry/Crashlytics, add a
+       NSPrivacyCollectedDataType dict for CrashData here. -->
+  <key>NSPrivacyCollectedDataTypes</key>
+  <array/>
+
+  <key>NSPrivacyAccessedAPITypes</key>
+  <array>
+    <!-- React Native / MMKV / AsyncStorage read app-scoped user defaults. -->
+    <dict>
+      <key>NSPrivacyAccessedAPIType</key>
+      <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+      <key>NSPrivacyAccessedAPITypeReasons</key>
+      <array><string>CA92.1</string></array>
+    </dict>
+
+    <!-- Metro/bundle and OpenCV cache files: creation/modification dates. -->
+    <dict>
+      <key>NSPrivacyAccessedAPIType</key>
+      <string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+      <key>NSPrivacyAccessedAPITypeReasons</key>
+      <array><string>C617.1</string></array>
+    </dict>
+
+    <!-- Frame buffer allocation guards check free space before recording. -->
+    <dict>
+      <key>NSPrivacyAccessedAPIType</key>
+      <string>NSPrivacyAccessedAPICategoryDiskSpace</string>
+      <key>NSPrivacyAccessedAPITypeReasons</key>
+      <array><string>E174.1</string></array>
+    </dict>
+
+    <!-- Monotonic clock for frame timestamps and NTP-style sync. -->
+    <dict>
+      <key>NSPrivacyAccessedAPIType</key>
+      <string>NSPrivacyAccessedAPICategorySystemBootTime</string>
+      <key>NSPrivacyAccessedAPITypeReasons</key>
+      <array><string>35F9.1</string></array>
+    </dict>
+  </array>
+</dict>
+</plist>

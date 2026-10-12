@@ -1,0 +1,99 @@
+# integrate.yml — THE LANDING MACHINE.
+#
+# Any push to a branch named agent/** is merged into main automatically IF
+# the merged result passes every check. No PR to open, no button to click,
+# no human merge step that can be forgotten. This is the fix for "agents did
+# the work but nothing reached main".
+#
+#   success → main gets a merge commit containing the branch head, so
+#             `git merge-base --is-ancestor <head> origin/main` becomes true
+#             (tools/agent/land.sh polls exactly that).
+#   failure → tag  integrate-failed/<branch>/<shortsha>  is pushed and an
+#             issue is opened with the log link. land.sh sees the tag.
+#
+# Runs are serialized (one integration at a time) so two agents landing at
+# once cannot race each other onto main.
+
+name: integrate
+on:
+  push:
+    branches: ['agent/**']
+
+concurrency:
+  group: integrate-main
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - name: Merge branch into a fresh main
+        id: merge
+        run: |
+          set -euo pipefail
+          git config user.name  "picklejudge-integrator"
+          git config user.email "integrator@users.noreply.github.com"
+          BR="${GITHUB_REF_NAME}"
+          echo "branch=$BR" >> "$GITHUB_OUTPUT"
+          echo "short=${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
+          git fetch origin main
+          git checkout -B integrate origin/main
+          if ! git merge --no-ff "origin/$BR" -m "integrate: $BR (${GITHUB_SHA::8})"; then
+            echo "reason=merge-conflict with main — rebase on origin/main and push again" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: web/package-lock.json }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+
+      - name: Engine tests (C++ ground truth)
+        run: |
+          cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release
+          cmake --build engine/build -j
+          ./engine/build/pbj_tests
+
+      - name: Rebuild wasm (keeps web/public/pbj_engine.wasm in sync with engine/)
+        run: |
+          pip install ziglang==0.17.0
+          bash engine/build_wasm.sh
+          if ! git diff --quiet -- web/public/pbj_engine.wasm; then
+            git add web/public/pbj_engine.wasm
+            git commit -m "chore: rebuild pbj_engine.wasm for ${GITHUB_REF_NAME}"
+          fi
+
+      - name: Web checks (typecheck, tests, build)
+        working-directory: web
+        run: |
+          npm ci
+          npm run check
+
+      - name: Land on main
+        run: |
+          set -euo pipefail
+          git push origin integrate:main
+          echo "LANDED ${GITHUB_REF_NAME} @ ${GITHUB_SHA::8} on main" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Report failure (tag + issue)
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="integrate-failed/${GITHUB_REF_NAME#agent/}/${GITHUB_SHA::8}"
+          git tag -f "$TAG" "$GITHUB_SHA" && git push -f origin "refs/tags/$TAG" || true
+          REASON="${{ steps.merge.outputs.reason }}"
+          gh issue create \
+            --title "integrate FAILED: ${GITHUB_REF_NAME} @ ${GITHUB_SHA::8}" \
+            --body "Branch \`${GITHUB_REF_NAME}\` did NOT land on main.
+          Reason: ${REASON:-a check failed — see log}
+          Log: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
+          Fix on the same branch and run tools/agent/land.sh again." || true
