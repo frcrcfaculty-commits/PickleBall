@@ -7,7 +7,7 @@ Branch name for every task = `agent/<owner>/<ID>-<slug>` exactly as listed.
 | ID | Owner | Branch | Depends on | Status |
 |---|---|---|---|---|
 | PJ-CORE-01 | claude | agent/claude/PJ-CORE-01-bootstrap | — | LANDED bdca051 |
-| PJ-OPS-01 | hermes | agent/hermes/PJ-OPS-01-deploy | CORE-01 | doing |
+| PJ-OPS-01 | hermes | agent/hermes/PJ-OPS-01-deploy | CORE-01 | LANDED 1b42f72 |
 | PJ-UI-01 | antigravity | agent/antigravity/PJ-UI-01-app-shell | CORE-01 | todo |
 | PJ-VAL-01 | gemini | agent/gemini/PJ-VAL-01-synth-video | CORE-01 | todo |
 | PJ-NET-01 | antigravity | agent/antigravity/PJ-NET-01-pairing | UI-01, OPS-01 | todo |
