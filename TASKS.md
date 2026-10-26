@@ -7,7 +7,7 @@ Branch name for every task = `agent/<owner>/<ID>-<slug>` exactly as listed.
 | ID | Owner | Branch | Depends on | Status |
 |---|---|---|---|---|
 | PJ-CORE-01 | claude | agent/claude/PJ-CORE-01-bootstrap | — | LANDED bdca051 |
-| PJ-OPS-01 | hermes | agent/hermes/PJ-OPS-01-deploy | CORE-01 | todo |
+| PJ-OPS-01 | hermes | agent/hermes/PJ-OPS-01-deploy | CORE-01 | doing |
 | PJ-UI-01 | antigravity | agent/antigravity/PJ-UI-01-app-shell | CORE-01 | todo |
 | PJ-VAL-01 | gemini | agent/gemini/PJ-VAL-01-synth-video | CORE-01 | todo |
 | PJ-NET-01 | antigravity | agent/antigravity/PJ-NET-01-pairing | UI-01, OPS-01 | todo |
@@ -143,9 +143,13 @@ targetSdk 36, Xcode 26. Builds only; store upload waits for H-03.
 
 ## Environments
 (PJ-OPS-01 fills this in)
-- Production: _tbd_
-- Preview pattern: _tbd_
-- Supabase project ref: _tbd_
+- Production: https://picklejudge.vercel.app  (device check: https://picklejudge.vercel.app/spike.html)
+- Preview pattern: `vercel deploy` from `web/` → https://picklejudge-<hash>-hansalpersonalai-7040s-projects.vercel.app
+  (Git auto-deploy NOT connected: Vercel account is not linked to GitHub account frcrcfaculty-commits;
+  until it is, deploy with `cd web && vercel deploy --prod`.)
+- Supabase project ref: eyxeougwbdtblwfpqjbs (ap-south-1, free). Table `device_reports`, RLS on, no policies;
+  writes only via SECURITY DEFINER rpc `submit_device_report` (64 KB cap). No service-role key used anywhere.
+- Vercel env (all envs): SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY (server), VITE_REPORT_URL=/api/report
 
 ## Requests (cross-ownership changes)
 | From | To | Request | Status |
